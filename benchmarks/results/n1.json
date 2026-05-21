@@ -1,0 +1,8 @@
+{
+  "posts": 500,
+  "naive_backend_fetches": 500,
+  "batched_backend_fetches": 1,
+  "n1_reduction_factor": 500,
+  "naive_latency_ms": 16.06,
+  "batched_latency_ms": 12.43
+}

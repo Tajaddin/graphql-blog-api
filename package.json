@@ -1,0 +1,31 @@
+{
+  "name": "graphql-blog-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GraphQL API (Yoga) with DataLoader batching. Hero: 1001 -> 2 backend fetches resolving 500 posts' authors (250x N+1 reduction).",
+  "license": "MIT",
+  "author": "Tajaddin Gafarov <gafarovtajaddin@gmail.com>",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "bench": "tsx benchmarks/n1.ts"
+  },
+  "dependencies": {
+    "@graphql-tools/schema": "^10.0.6",
+    "dataloader": "^2.2.3",
+    "graphql": "^16.9.0",
+    "graphql-yoga": "^5.10.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
