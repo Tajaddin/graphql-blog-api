@@ -45,12 +45,18 @@ Role categories unlocked: **Full-Stack**, Backend (Node/TypeScript), API Enginee
 
 GraphQL without DataLoader is a production incident waiting to happen. This repo backs the "GraphQL" resume line with a correct, request-scoped batching setup and a benchmark that proves the fetch reduction.
 
-## Run it
+## How to run
+
+Prerequisites: Node 20+.
 
 ```bash
 npm install
-npm run dev      # GraphQL endpoint on http://localhost:8080/graphql
+npm test                    # 11 vitest cases
+npm run dev                 # GraphQL endpoint on http://localhost:8080/graphql
+npx tsx benchmarks/n1.ts    # reproduces the 500x N+1 reduction
 ```
+
+Smoke test (after `npm run dev`):
 
 ```graphql
 query {
