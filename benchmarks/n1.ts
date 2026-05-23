@@ -53,13 +53,22 @@ async function main() {
   const naive = await run("naive", postCount);
   const batched = await run("batched", postCount);
 
-  const summary = {
+  const results = {
     posts: postCount,
     naive_backend_fetches: naive.backend_fetches,
     batched_backend_fetches: batched.backend_fetches,
     n1_reduction_factor: Number((naive.backend_fetches / batched.backend_fetches).toFixed(1)),
     naive_latency_ms: naive.latency_ms,
     batched_latency_ms: batched.latency_ms,
+  };
+  const summary = {
+    metadata: {
+      timestamp: new Date().toISOString(),
+      command: `node ${process.argv.slice(1).join(" ")}`,
+      hardware: process.env["BENCH_HARDWARE"] ?? "set BENCH_HARDWARE='CPU; RAM; OS' to record machine specs",
+      node_version: process.version,
+    },
+    results,
   };
   mkdirSync(dirname("benchmarks/results/n1.json"), { recursive: true });
   writeFileSync("benchmarks/results/n1.json", JSON.stringify(summary, null, 2));

@@ -11,14 +11,18 @@
 Reproducible instantly:
 
 ```bash
-npx tsx benchmarks/n1.ts --posts 500
+BENCH_HARDWARE="your machine specs" npx tsx benchmarks/n1.ts --posts 500
 ```
+
+Last measured baseline lives in [`benchmarks/results/n1.json`](benchmarks/results/n1.json) (includes timestamp, hardware, and the exact command used).
 
 | Resolving 500 posts + their authors | Backend fetches | Latency |
 |---|---:|---:|
-| **Naive resolver** (1 author lookup per post) | **500** | 16.1 ms |
-| **DataLoader resolver** (batched) | **1** | 12.4 ms |
+| **Naive resolver** (1 author lookup per post) | **500** | ~22 ms |
+| **DataLoader resolver** (batched) | **1** | ~16 ms |
 | **Reduction** | **500x** | |
+
+The fetch counts are deterministic properties of DataLoader batching; latency varies run to run.
 
 The benchmark runs the identical GraphQL query against both resolver strategies and counts real backend calls through a fetch-counting data layer. The N+1 problem and its DataLoader fix are the single most common GraphQL performance topic; here it is demonstrated with receipts.
 
