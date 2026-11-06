@@ -14,6 +14,11 @@ async function exec(source: string, contextValue: ReturnType<typeof ctx>, variab
   return result.data!;
 }
 
+async function errorsFor(source: string) {
+  const result = await graphql({ schema: createSchema("batched"), source, contextValue: ctx() });
+  return result.errors?.map((e) => e.message) ?? [];
+}
+
 describe("schema", () => {
   it("lists posts with their authors", async () => {
     const data = await exec(
@@ -47,5 +52,29 @@ describe("schema", () => {
     const data = await exec(`{ posts(limit: 2, offset: 5) { id } }`, c);
     const posts = data["posts"] as Array<{ id: string }>;
     expect(posts.map((p) => p.id)).toEqual(["p5", "p6"]);
+  });
+
+  it("counts posts per author when they are not evenly split", async () => {
+    const data = await exec(`{ authors { id postCount } }`, ctx(new BlogData(3, 10)));
+    expect(data["authors"]).toEqual([
+      { id: "a0", postCount: 4 },
+      { id: "a1", postCount: 3 },
+      { id: "a2", postCount: 3 },
+    ]);
+  });
+
+  it("caps limit at 100", async () => {
+    const data = await exec(`{ posts(limit: 10000) { id } }`, ctx(new BlogData(5, 500)));
+    expect(data["posts"]).toHaveLength(100);
+  });
+
+  it("rejects a limit below 1", async () => {
+    for (const limit of [0, -1]) {
+      expect(await errorsFor(`{ posts(limit: ${limit}) { id } }`)).toEqual(["limit must be at least 1"]);
+    }
+  });
+
+  it("rejects a negative offset", async () => {
+    expect(await errorsFor(`{ posts(offset: -1) { id } }`)).toEqual(["offset must not be negative"]);
   });
 });

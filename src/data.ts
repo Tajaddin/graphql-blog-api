@@ -20,9 +20,10 @@ export class BlogData {
   /** Number of batched author lookups performed (DataLoader path). */
   authorBatchCalls = 0;
 
-  readonly authors: Author[];
-  readonly posts: Post[];
+  readonly authors: readonly Author[];
+  readonly posts: readonly Post[];
   private readonly authorById: Map<string, Author>;
+  private readonly postCountByAuthor = new Map<string, number>();
 
   constructor(authorCount = 20, postCount = 500) {
     this.authors = Array.from({ length: authorCount }, (_, i) => ({
@@ -35,6 +36,14 @@ export class BlogData {
       title: `Post ${i}`,
       authorId: `a${i % authorCount}`,
     }));
+    for (const post of this.posts) {
+      this.postCountByAuthor.set(post.authorId, (this.postCountByAuthor.get(post.authorId) ?? 0) + 1);
+    }
+  }
+
+  /** Counted once at construction, so Author.postCount is O(1) rather than a scan of every post. */
+  countPosts(authorId: string): number {
+    return this.postCountByAuthor.get(authorId) ?? 0;
   }
 
   listPosts(limit = 100, offset = 0): Post[] {
