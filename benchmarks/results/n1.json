@@ -1,16 +1,16 @@
 {
   "metadata": {
-    "timestamp": "2026-05-23T01:05:31.163Z",
-    "command": "node C:\\Users\\taced\\Documents\\Project_git\\graphql-blog-api\\benchmarks\\n1.ts --posts 500",
-    "hardware": "Intel i7-10875H 8c/16t @ 2.3GHz; 32 GB RAM; Windows 11",
-    "node_version": "v24.15.0"
+    "timestamp": "2026-11-06T05:43:30.450Z",
+    "command": "node G:\\Github Projects\\_wt\\graphql-blog-api\\benchmarks\\n1.ts --posts 100",
+    "hardware": "13th Gen Intel Core i5-13600KF 14c/20t; 32 GB RAM; Windows 11 Pro",
+    "node_version": "v24.14.0"
   },
   "results": {
-    "posts": 500,
-    "naive_backend_fetches": 500,
+    "posts": 100,
+    "naive_backend_fetches": 100,
     "batched_backend_fetches": 1,
-    "n1_reduction_factor": 500,
-    "naive_latency_ms": 22.45,
-    "batched_latency_ms": 15.84
+    "n1_reduction_factor": 100,
+    "naive_latency_ms": 13.58,
+    "batched_latency_ms": 4.21
   }
 }

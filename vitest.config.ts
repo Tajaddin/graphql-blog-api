@@ -1,22 +1,20 @@
+import { createRequire } from "node:module";
 import { defineConfig } from "vitest/config";
 
+const require = createRequire(import.meta.url);
+
 export default defineConfig({
-  // Force a single copy of graphql; @graphql-tools and the direct import must
-  // share one module realm or GraphQLSchema instances are rejected across realms.
+  // Resolve every `graphql` import to the CommonJS entry that Node itself uses
+  // at runtime. Packages that `require("graphql")` (graphql-armor) and the ESM
+  // graph then share one module realm; otherwise GraphQLSchema and GraphQLError
+  // instances are rejected or masked across realms.
   resolve: {
-    dedupe: ["graphql"],
+    alias: [{ find: /^graphql$/, replacement: require.resolve("graphql") }],
   },
   test: {
     globals: true,
     environment: "node",
     include: ["tests/**/*.test.ts"],
-    server: {
-      deps: {
-        // Inline every graphql-named package so vite transforms them into one
-        // module graph sharing the single deduped graphql instance.
-        inline: [/graphql/],
-      },
-    },
     coverage: { provider: "v8", include: ["src/**/*.ts"], exclude: ["src/server.ts"] },
   },
 });

@@ -2,7 +2,7 @@ import { graphql } from "graphql";
 import { describe, expect, it } from "vitest";
 import { BlogData } from "../src/data.js";
 import { createLoaders } from "../src/loaders.js";
-import { createSchema } from "../src/schema.js";
+import { createSchema, MAX_PAGE_SIZE } from "../src/schema.js";
 
 const QUERY = `query($limit: Int!) { posts(limit: $limit) { id author { id } } }`;
 
@@ -28,10 +28,11 @@ describe("N+1 behavior", () => {
   });
 
   it("reduction factor scales with post count", async () => {
-    const naive = await fetchesFor("naive", 500);
-    const batched = await fetchesFor("batched", 500);
-    expect(naive).toBe(500);
-    expect(batched).toBe(1);
-    expect(naive / batched).toBe(500);
+    for (const posts of [10, MAX_PAGE_SIZE]) {
+      const naive = await fetchesFor("naive", posts);
+      const batched = await fetchesFor("batched", posts);
+      expect(naive).toBe(posts);
+      expect(batched).toBe(1);
+    }
   });
 });

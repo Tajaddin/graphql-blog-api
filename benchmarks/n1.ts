@@ -3,14 +3,14 @@
 // backend-fetch counts plus latency. This is the canonical GraphQL performance
 // win, measured rather than asserted.
 //
-//   npx tsx benchmarks/n1.ts --posts 500
+//   npx tsx benchmarks/n1.ts --posts 100
 
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { graphql } from "graphql";
 import { BlogData } from "../src/data.js";
 import { createLoaders } from "../src/loaders.js";
-import { createSchema, type ResolveMode } from "../src/schema.js";
+import { createSchema, MAX_PAGE_SIZE, type ResolveMode } from "../src/schema.js";
 
 const QUERY = /* GraphQL */ `
   query AllPostsWithAuthors($limit: Int!) {
@@ -48,7 +48,10 @@ async function run(mode: ResolveMode, postCount: number) {
 
 async function main() {
   const postsArg = process.argv.indexOf("--posts");
-  const postCount = postsArg >= 0 ? Number(process.argv[postsArg + 1]) : 500;
+  const postCount = postsArg >= 0 ? Number(process.argv[postsArg + 1]) : MAX_PAGE_SIZE;
+  if (!Number.isInteger(postCount) || postCount < 1 || postCount > MAX_PAGE_SIZE) {
+    throw new Error(`--posts must be 1-${MAX_PAGE_SIZE}: posts() caps a page at ${MAX_PAGE_SIZE}`);
+  }
 
   const naive = await run("naive", postCount);
   const batched = await run("batched", postCount);
